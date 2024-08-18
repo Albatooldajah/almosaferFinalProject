@@ -1,11 +1,14 @@
 package homePage;
 
+import org.testng.annotations.Test;
+import org.testng.AssertJUnit;
 import java.time.Duration;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Random;
 
 import org.openqa.selenium.By;
+import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
@@ -17,7 +20,7 @@ public class myTestCases {
 	WebDriver driver = new ChromeDriver();
 	String AlMosaferURL = "https://global.almosafer.com/en";
 	String theExpectedDefualtLanguge = "en";
-	Random Rand =new Random();
+	Random Rand = new Random();
 
 	@BeforeTest
 	public void mySetup() {
@@ -33,7 +36,7 @@ public class myTestCases {
 		// System.out.println(driver.findElement(By.tagName("html")).getAttribute("lang"));
 
 		String actualLanguge = driver.findElement(By.tagName("html")).getAttribute("lang");
-		Assert.assertEquals(actualLanguge, theExpectedDefualtLanguge);
+		AssertJUnit.assertEquals(actualLanguge, theExpectedDefualtLanguge);
 
 	}
 
@@ -42,7 +45,7 @@ public class myTestCases {
 		String excptedCurrency = "SAR";
 		WebElement Currency = driver.findElement(By.xpath("//button [@data-testid='Header__CurrencySelector']"));
 		String actualCurrency = Currency.getText();
-		Assert.assertEquals(actualCurrency, excptedCurrency);
+		AssertJUnit.assertEquals(actualCurrency, excptedCurrency);
 
 	}
 
@@ -50,7 +53,7 @@ public class myTestCases {
 	public void checkContactNumber() {
 		String excptedContact = "+966554400000";
 		String actualConactNumber = driver.findElement(By.tagName("strong")).getText();
-		Assert.assertEquals(actualConactNumber, excptedContact);
+		AssertJUnit.assertEquals(actualConactNumber, excptedContact);
 	}
 
 	// svg[@data-testid='Footer__QitafLogo']
@@ -68,7 +71,7 @@ public class myTestCases {
 
 		System.out.println(theLogo.isDisplayed());
 		boolean actualResultForLogo = theLogo.isDisplayed();
-		Assert.assertEquals(actualResultForLogo, theExcptedResultforLogo);
+		AssertJUnit.assertEquals(actualResultForLogo, theExcptedResultforLogo);
 
 	}
 
@@ -77,7 +80,7 @@ public class myTestCases {
 		String excptedValue = "false";
 		WebElement HotelTab = driver.findElement(By.id("uncontrolled-tab-example-tab-hotels"));
 		String actualValue = HotelTab.getAttribute("aria-selected");
-		Assert.assertEquals(actualValue, excptedValue);
+		AssertJUnit.assertEquals(actualValue, excptedValue);
 	}
 
 	@Test(priority = 6)
@@ -85,7 +88,7 @@ public class myTestCases {
 		LocalDate todayDate = LocalDate.now();
 		// System.out.println(todayDate.getDayOfYear());
 		int today = todayDate.getDayOfMonth();
-		//we can't add in this method:	System.out.println(today+22);
+		// we can't add in this method: System.out.println(today+22);
 
 		int tomorrow = todayDate.plusDays(1).getDayOfMonth();
 		int theAfterTomorow = todayDate.plusDays(2).getDayOfMonth();
@@ -96,20 +99,61 @@ public class myTestCases {
 		String ActualArrivalDate = departureAndArravialDate.get(1).getText();
 
 		System.out.println(ActualDepatureDate);
-		//we need convert ActualDepatureDate to integer because diffrent type until to compare between ActualDepatureDate and tomorrow
+		// we need convert ActualDepatureDate to integer because diffrent type until to
+		// compare between ActualDepatureDate and tomorrow
 		int ActualDepatureDateAsInt = Integer.parseInt(ActualDepatureDate);
 		int ActualArrivalDateAsInt = Integer.parseInt(ActualArrivalDate);
-         //tomorrow is excpted value
-		Assert.assertEquals(ActualDepatureDateAsInt, tomorrow);
-		Assert.assertEquals(ActualArrivalDateAsInt, tomorrow);
+		// tomorrow is excpted value
+		AssertJUnit.assertEquals(ActualDepatureDateAsInt, tomorrow);
+		AssertJUnit.assertEquals(ActualArrivalDateAsInt, theAfterTomorow);
+	}
+
+	@Test(priority = 7)
+	public void randomlyChangeTheLanguge() {
+		String[] URLs = { "https://www.almosafer.com/en", "https://www.almosafer.com/ar" };
+		int randomIndex = Rand.nextInt(URLs.length);
+		driver.get(URLs[randomIndex]);
+
+	}
+
+	@Test(priority = 8)
+	public void randomlyCitiesWhenChangeTheLanguge() {
+		WebElement clickHotel = driver.findElement(By.id("uncontrolled-tab-example-tab-hotels"));
+		clickHotel.click();
+		
+		WebElement typehere = driver.findElement(By.cssSelector(".sc-phbroq-2.uQFRS.AutoComplete__Input"));
+		String [] CitiesInArabicLanguge = {"دبي","جده"};
+		int randomArabicCity = Rand.nextInt(CitiesInArabicLanguge.length);
+		String [] CitiesInEnglishLanguge = {"Dubai","Jedah","Riyad"};
+		int randomEnglishCity = Rand.nextInt(CitiesInEnglishLanguge.length);
+		
+		
+
+		//WebElement SearchHotelInputField = driver.findElement(By.xpath("//input[@data-testid='AutoCompleteInput']"));
+
+		String WebsiteURL = driver.getCurrentUrl();
+
+		if (WebsiteURL.contains("ar")) {
+
+			typehere.sendKeys(CitiesInArabicLanguge[randomArabicCity]);
+		} else {
+			typehere.sendKeys(CitiesInEnglishLanguge[randomEnglishCity]);
+
 		}
-      @Test(priority = 7)
-      public void randomlyChangeTheLanguge() {
-    	  String [] URLs = {"https://www.almosafer.com/en","https://www.almosafer.com/ar"};
-    	  int  randomIndex = Rand.nextInt(URLs.length);
-    	      driver.get(URLs[randomIndex]);
-    	  
-    	  
-    	  
-      }
-}
+		
+		
+		WebElement ListOfLocations = driver.findElement(By.cssSelector(".sc-phbroq-4.gGwzVo.AutoComplete__List"));
+				
+				
+				
+			WebElement firstResult = ListOfLocations.findElements(By.tagName("li")).get(1); 
+			firstResult.click(); 
+
+		
+
+
+
+	}
+
+	}
+
