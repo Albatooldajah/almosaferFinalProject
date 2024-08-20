@@ -12,6 +12,7 @@ import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.support.ui.Select;
 import org.testng.Assert;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
@@ -117,19 +118,18 @@ public class myTestCases {
 	}
 
 	@Test(priority = 8)
-	public void randomlyCitiesWhenChangeTheLanguge() {
-		WebElement clickHotel = driver.findElement(By.id("uncontrolled-tab-example-tab-hotels"));
-		clickHotel.click();
-		
-		WebElement typehere = driver.findElement(By.cssSelector(".sc-phbroq-2.uQFRS.AutoComplete__Input"));
-		String [] CitiesInArabicLanguge = {"دبي","جده"};
-		int randomArabicCity = Rand.nextInt(CitiesInArabicLanguge.length);
-		String [] CitiesInEnglishLanguge = {"Dubai","Jedah","Riyad"};
-		int randomEnglishCity = Rand.nextInt(CitiesInEnglishLanguge.length);
-		
-		
+	public void randomlyFillCitiesWhenChangeTheLanguge() {
+		WebElement clickHotelTab = driver.findElement(By.id("uncontrolled-tab-example-tab-hotels"));
+		clickHotelTab.click();
 
-		//WebElement SearchHotelInputField = driver.findElement(By.xpath("//input[@data-testid='AutoCompleteInput']"));
+		WebElement typehere = driver.findElement(By.cssSelector(".sc-phbroq-2.uQFRS.AutoComplete__Input"));
+		String[] CitiesInArabicLanguge = { "دبي", "جده" };
+		int randomArabicCity = Rand.nextInt(CitiesInArabicLanguge.length);
+		String[] CitiesInEnglishLanguge = { "Dubai", "Jedah", "Riyad" };
+		int randomEnglishCity = Rand.nextInt(CitiesInEnglishLanguge.length);
+
+		// WebElement SearchHotelInputField =
+		// driver.findElement(By.xpath("//input[@data-testid='AutoCompleteInput']"));
 
 		String WebsiteURL = driver.getCurrentUrl();
 
@@ -140,20 +140,82 @@ public class myTestCases {
 			typehere.sendKeys(CitiesInEnglishLanguge[randomEnglishCity]);
 
 		}
-		
-		
-		WebElement ListOfLocations = driver.findElement(By.cssSelector(".sc-phbroq-4.gGwzVo.AutoComplete__List"));
-				
-				
-				
-			WebElement firstResult = ListOfLocations.findElements(By.tagName("li")).get(1); 
-			firstResult.click(); 
 
-		
-
-
+		WebElement listOfSearch = driver.findElement(By.cssSelector(".sc-phbroq-4.gGwzVo.AutoComplete__List"));
+		WebElement clickonFirstResult = listOfSearch.findElements(By.tagName("li")).get(1);
+		clickonFirstResult.click();
 
 	}
 
+	@Test(priority = 9)
+	public void randomlySelectTheNumberOfVistor() {
+		WebElement SelectorofVister = driver
+				.findElement(By.xpath("//select[@data-testid='HotelSearchBox__ReservationSelect_Select']"));
+
+		Select select = new Select(SelectorofVister);
+
+		// we can use select with:by index(int) ,by value(STR) , by visble: The text
+		// inside option
+		// select.selectByIndex(1)
+		// select.selectByValue("A");
+		// by visibleText
+//		if(driver.getCurrentUrl().contains("ar")) {
+//			select.selectByVisibleText("1 غرفة، 1 بالغ، 0 أطفال"); 
+//
+//		}else {
+//			select.selectByValue("1 Room, 1 Adult, 0 Children"); 
+//		}
+
+		// By index
+
+		int randomIndex = Rand.nextInt(2);
+		select.selectByIndex(randomIndex);
+		WebElement SearchHotelButton = driver
+				.findElement(By.xpath("//button[@data-testid='HotelSearchBox__SearchButton']"));
+		SearchHotelButton.click();
+
 	}
 
+	@Test(priority = 10)
+	public void checkThePageFullyLoded() throws InterruptedException {
+
+		boolean excptedResult = true;
+		// we use the thread when element needs a few of time
+		Thread.sleep(10000);
+		String results = driver.findElement(By.xpath("//span[@data-testid='HotelSearchResult__resultsFoundCount']"))
+				.getText();
+		boolean finshed = results.contains("وجدنا") || results.contains("found");
+		System.out.println(finshed);
+		Assert.assertEquals(finshed, excptedResult);
+
+	}
+
+	@Test(priority = 11)
+	public void sortThePricesFromLowToHigh() {
+		boolean expectedResults =true;
+		WebElement lowPriceButton = driver
+				.findElement(By.xpath("//button[@data-testid='HotelSearchResult__sort__LOWEST_PRICE']"));
+		lowPriceButton.click();
+
+		WebElement thePricesContenier =driver.findElement(By.cssSelector(".sc-htpNat.KtFsv.col-9"));
+		
+		
+		List<WebElement> thePrices = thePricesContenier.findElements(By.className("Price__Value"));
+        
+		
+		String theLowPrice = thePrices.get(0).getText();
+        String thehighPrice = thePrices.get(thePrices.size()-1).getText();
+		System.out.println(thehighPrice);
+		System.out.println(theLowPrice);
+
+		int LowestPriceAsInt = Integer.parseInt(theLowPrice);
+		int HighestPriceAsInt = Integer.parseInt(thehighPrice);
+		
+		
+		boolean ActualResults = LowestPriceAsInt< HighestPriceAsInt ;
+		
+	Assert.assertEquals(ActualResults, expectedResults);
+	
+	}
+
+}

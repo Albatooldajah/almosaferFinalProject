@@ -6,7 +6,7 @@
       <class name="homePage.myTestCases">
         <methods>
           <include name="mySetup"/>
-          <include name="randomlyCountryWhenChangeTheLanguge"/>
+          <include name="checkThePageFullyLoded"/>
         </methods>
       </class> <!-- homePage.myTestCases -->
     </classes>
